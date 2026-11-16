@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { api, type Session } from "@/lib/client";
 import { education, type Resource } from "@/lib/domain";
+import { serviceInfo } from "@/lib/service-info";
 import { Button, Notice } from "./ui";
 import ReportWizard from "./report-wizard";
 import { Tracking, MyReports, Account, Login } from "./user-pages";
@@ -664,6 +665,22 @@ export function Resources() {
         text="Encuentra orientación y consulta fuentes institucionales. Confirma los horarios y la disponibilidad directamente con cada servicio."
       />
       <Emergency />
+      <section className="panel prose">
+        <h2>Contacto de Centinela Digital</h2>
+        <p>
+          {serviceInfo.operator}:{" "}
+          <a href={`mailto:${serviceInfo.email}`}>{serviceInfo.email}</a>.
+        </p>
+        <p>
+          {serviceInfo.schedule}. {serviceInfo.timeZone}.
+        </p>
+        <p>
+          Consulta los avances de tu caso con el folio y la clave en el
+          seguimiento. No envíes tu contraseña ni tu clave privada por correo.
+          El horario de revisión no garantiza una respuesta inmediata; en una
+          emergencia llama al 911.
+        </p>
+      </section>
       <label className="search-box">
         <Search size={19} />
         <input
@@ -783,6 +800,20 @@ function Privacy({ terms, demo }: { terms: boolean; demo: boolean }) {
             ficticia.
           </Notice>
         )}
+        <h2>Responsable y contacto</h2>
+        <p>
+          {serviceInfo.operator} es el equipo responsable de operar esta
+          plataforma y atender las solicitudes sobre tus datos. Puedes escribir
+          a <a href={`mailto:${serviceInfo.email}`}>{serviceInfo.email}</a>.
+        </p>
+        <p>
+          {serviceInfo.schedule}. {serviceInfo.timeZone}.
+        </p>
+        <p>
+          {serviceInfo.publicAddress
+            ? `Domicilio de contacto: ${serviceInfo.publicAddress}.`
+            : "El equipo todavía no cuenta con un domicilio institucional o de contacto público. El canal disponible para atención y privacidad es el correo indicado."}
+        </p>
         <h2>Alcance de la plataforma</h2>
         <p>
           Centinela Digital permite registrar situaciones y consultar respuestas
@@ -812,6 +843,29 @@ function Privacy({ terms, demo }: { terms: boolean; demo: boolean }) {
           aviso. No se envían avisos externos en esta versión; las novedades se
           consultan dentro del seguimiento.
         </p>
+        <h2>Finalidades y proveedores</h2>
+        <p>
+          Utilizamos la información para registrar tu reporte, revisar la
+          situación, documentar su atención y permitirte consultar el
+          seguimiento. Si autorizas el contacto, el equipo podrá comunicarse
+          contigo sobre tu caso. No se utiliza para publicidad ni se canaliza
+          automáticamente a autoridades, escuelas u otras instituciones.
+        </p>
+        <p>
+          Supabase proporciona la base de datos, la autenticación y el
+          almacenamiento privado; Vercel aloja la aplicación. Estos proveedores
+          pueden procesar datos y metadatos técnicos en su infraestructura,
+          incluida infraestructura fuera de México. El acceso del equipo se
+          limita por roles y asignaciones.
+        </p>
+        <h2>Evidencias y copias originales</h2>
+        <p>
+          Adjuntar evidencias es opcional. Las imágenes JPG y PNG se procesan
+          para validar su contenido y retirar metadatos como la ubicación. La
+          copia almacenada puede diferir del archivo original; conserva el
+          original si necesitas presentarlo ante una autoridad. Los PDF solo se
+          aceptan cuando está disponible el análisis de seguridad de archivos.
+        </p>
         <h2>Dispositivos compartidos</h2>
         <p>
           La salida rápida abre una página externa e intenta cerrar la sesión.
@@ -819,14 +873,35 @@ function Privacy({ terms, demo }: { terms: boolean; demo: boolean }) {
           dispositivo. Los borradores se exportan cifrados únicamente cuando tú
           lo solicitas.
         </p>
-        <h2>Antes de recibir casos reales</h2>
+        <h2>Derechos sobre tus datos</h2>
         <p>
-          La institución operadora debe completar y publicar su aviso de
-          privacidad: identidad y domicilio del responsable, finalidades,
-          fundamento aplicable, derechos ARCO y contacto para ejercerlos,
-          transferencias, plazos de conservación y eliminación. También debe
-          aprobar los protocolos de atención a menores y de canalización. Este
-          texto provisional no sustituye ese aviso.
+          Para solicitar acceso, rectificación, cancelación u oposición al
+          tratamiento de tus datos, revocar tu autorización de contacto o
+          solicitar información sobre su conservación, escribe a{" "}
+          <a href={`mailto:${serviceInfo.email}`}>{serviceInfo.email}</a>.
+          Indica qué deseas solicitar y tu folio si lo tienes, sin enviar tu
+          clave privada ni tu contraseña. El equipo acordará contigo una forma
+          segura de verificar tu solicitud sin pedir más datos de los
+          necesarios.
+        </p>
+        <h2>Conservación y eliminación</h2>
+        <p>
+          Los registros se conservan durante la atención y el seguimiento del
+          caso. No existe una eliminación automática por plazo. Puedes solicitar
+          su revisión o eliminación al correo de privacidad; el equipo debe
+          revisar los registros, archivos y respaldos relacionados, así como las
+          obligaciones que correspondan, e informarte del resultado. La
+          eliminación de un archivo del seguimiento no elimina las copias que
+          otras personas hayan descargado.
+        </p>
+        <h2>Atención y seguimiento</h2>
+        <p>
+          El equipo revisa los reportes en el horario publicado, valora su
+          prioridad y registra las acciones y respuestas en el seguimiento. No
+          se promete una respuesta inmediata. La atención de menores requiere
+          especial cuidado; no se notificará automáticamente a una escuela o a
+          una persona que pudiera estar involucrada. Cualquier canalización debe
+          explicarse y documentarse según corresponda al caso.
         </p>
         <h2>Uso responsable</h2>
         <p>

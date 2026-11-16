@@ -29,6 +29,7 @@ export type FullReport = Omit<Report, "token_hash"> & {
   contact?: Contact;
   first_reviewed_at: string | null;
   evidence_enabled: boolean;
+  evidence_pdf_enabled: boolean;
   feedback: { rating: number; comment: string; created_at: string } | null;
 };
 export function StatusBadge({ status }: { status: string }) {
@@ -491,7 +492,11 @@ export default function ReportDetail({
                   <input
                     disabled={busy}
                     type="file"
-                    accept="image/jpeg,image/png,application/pdf"
+                    accept={
+                      report.evidence_pdf_enabled
+                        ? "image/jpeg,image/png,application/pdf"
+                        : "image/jpeg,image/png"
+                    }
                     onChange={(e) => {
                       upload(e.target.files?.[0]);
                       e.target.value = "";
@@ -501,7 +506,9 @@ export default function ReportDetail({
               )}
             {!staff && report.evidence_enabled && (
               <p className="field-help">
-                PNG, JPG o PDF · máximo 5 archivos de 4 MB.
+                {report.evidence_pdf_enabled ? "PNG, JPG o PDF" : "PNG o JPG"} ·
+                máximo 5 archivos de 4 MB. Las imágenes se procesan para retirar
+                metadatos; conserva tus originales en un lugar seguro.
               </p>
             )}
           </section>

@@ -1,5 +1,6 @@
 import { test, expect, type APIRequestContext } from "@playwright/test";
 import { randomBytes } from "node:crypto";
+import sharp from "sharp";
 const origin = "http://localhost:3000";
 test.beforeAll(async ({ request }) => {
   const response = await request.get("/api/session");
@@ -180,10 +181,11 @@ test("permisos: clave, casos ajenos, notas internas, evidencias y seguimiento", 
       (u: { kind: string }) => u.kind === "internal",
     ),
   ).toBe(true);
-  const png = Buffer.from(
-    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j5l8AAAAASUVORK5CYII=",
-    "base64",
-  );
+  const png = await sharp({
+    create: { width: 1, height: 1, channels: 3, background: "blue" },
+  })
+    .png()
+    .toBuffer();
   const upload = await owner.post(`/api/reports/${r.id}/evidence`, {
     headers: { Origin: origin },
     multipart: {
@@ -211,6 +213,17 @@ test("permisos: clave, casos ajenos, notas internas, evidencias y seguimiento", 
     },
   });
   expect(spoof.status()).toBe(400);
+  const pdfWithoutScanner = await owner.post(`/api/reports/${r.id}/evidence`, {
+    headers: { Origin: origin },
+    multipart: {
+      file: {
+        name: "prueba.pdf",
+        mimeType: "application/pdf",
+        buffer: Buffer.from("%PDF-1.7\nPrueba ficticia"),
+      },
+    },
+  });
+  expect(pdfWithoutScanner.status()).toBe(400);
   const oversized = await owner.post(`/api/reports/${r.id}/evidence`, {
     headers: { Origin: origin },
     multipart: {

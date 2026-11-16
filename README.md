@@ -4,7 +4,7 @@
 
 Centinela Digital es una aplicación web que permite a personas y estudiantes reconocer y reportar situaciones de violencia dentro de la escuela, fuera del plantel o en la vida diaria. Ofrece reportes anónimos o confidenciales, seguimiento privado e información sobre recursos y centros de ayuda.
 
-El proyecto continúa en desarrollo. La recepción de casos reales permanece deshabilitada hasta completar el aviso de privacidad y el protocolo de atención. La plataforma no sustituye una denuncia formal ni los servicios de emergencia.
+La recepción de reportes está habilitada en la aplicación publicada. El Equipo de Centinela Digital revisa los casos de lunes a domingo, de 7:00 a 22:00, hora del centro de México. La plataforma no sustituye una denuncia formal ni los servicios de emergencia. El contacto y los detalles del tratamiento de datos se encuentran en el aviso de privacidad de la aplicación.
 
 ## Objetivo
 
@@ -25,7 +25,7 @@ La instalación, configuración y comprobaciones están en la [guía técnica](d
 
 ## Tecnologías planeadas
 
-Las tecnologías previstas originalmente —HTML, CSS, JavaScript y PostgreSQL— ya forman parte del proyecto. Para las siguientes etapas está pendiente integrar un servicio de análisis de seguridad de archivos que permita habilitar la carga de evidencias en el entorno real.
+Las tecnologías previstas originalmente —HTML, CSS, JavaScript y PostgreSQL— ya forman parte del proyecto. Las imágenes JPG y PNG se validan y procesan para retirar metadatos antes de guardarlas. Está pendiente integrar un servicio de análisis de seguridad de archivos para habilitar también los PDF.
 
 ## Integrantes
 

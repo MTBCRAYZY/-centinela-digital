@@ -391,15 +391,22 @@ export default function ReportWizard({ session }: { session: Session | null }) {
                   <div>
                     <strong>Evidencias (opcional)</strong>
                     <p>
-                      JPG, PNG o PDF · hasta 5 archivos de 4 MB. No te pongas en
-                      riesgo para conseguirlos.
+                      {session?.evidence_pdf_enabled
+                        ? "JPG, PNG o PDF"
+                        : "JPG o PNG"}{" "}
+                      · hasta 5 archivos de 4 MB. No te pongas en riesgo para
+                      conseguirlos.
                     </p>
                     <label className="file-button">
                       Elegir archivos
                       <input
                         aria-label="Elegir evidencias"
                         type="file"
-                        accept="image/jpeg,image/png,application/pdf"
+                        accept={
+                          session?.evidence_pdf_enabled
+                            ? "image/jpeg,image/png,application/pdf"
+                            : "image/jpeg,image/png"
+                        }
                         multiple
                         disabled={!session?.evidence_enabled}
                         onChange={(e) => {
@@ -440,9 +447,11 @@ export default function ReportWizard({ session }: { session: Session | null }) {
                   </Notice>
                 )}
                 <p className="small-text">
-                  Los archivos pueden contener nombres o metadatos que te
-                  identifiquen. La carga real requiere un servicio de análisis
-                  de seguridad configurado.
+                  Las imágenes se procesan para retirar metadatos, como la
+                  ubicación. Su contenido y nombre aún pueden identificarte.
+                  Conserva tus originales en un lugar seguro: la copia guardada
+                  aquí puede ser diferente. No necesitas adjuntar pruebas para
+                  reportar.
                 </p>
               </>
             )}

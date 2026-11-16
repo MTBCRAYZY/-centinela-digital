@@ -41,6 +41,7 @@ export type Session = {
   demo: boolean;
   accepting: boolean;
   evidence_enabled: boolean;
+  evidence_pdf_enabled: boolean;
   user: null | {
     id: string;
     name: string;

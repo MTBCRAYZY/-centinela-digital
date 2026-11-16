@@ -22,14 +22,8 @@ import {
   db,
   secret,
 } from "@/lib/backend";
-import {
-  digest,
-  newKey,
-  hashPassword,
-  verifyPassword,
-  fileMime,
-  cleanFilename,
-} from "@/lib/security";
+import { digest, newKey, hashPassword, verifyPassword } from "@/lib/security";
+import { prepareEvidence, EvidenceError } from "@/lib/evidence";
 import { reportSchema, statuses, type Report } from "@/lib/domain";
 import { appOrigin } from "@/lib/origin";
 import { safeBackendError, recoveryFailure } from "@/lib/diagnostics";
@@ -133,7 +127,8 @@ async function publicReport(r: Report, staff: boolean) {
     evidence,
     contact,
     first_reviewed_at: firstReviewedAt,
-    evidence_enabled: demo || !!process.env.EVIDENCE_SCANNER_URL,
+    evidence_enabled: true,
+    evidence_pdf_enabled: !!process.env.EVIDENCE_SCANNER_URL,
     feedback: evaluation
       ? {
           rating: evaluation.rating,
@@ -167,7 +162,8 @@ async function handle(
       return ok({
         demo,
         accepting: demo || process.env.ACCEPT_REAL_REPORTS === "true",
-        evidence_enabled: demo || !!process.env.EVIDENCE_SCANNER_URL,
+        evidence_enabled: true,
+        evidence_pdf_enabled: !!process.env.EVIDENCE_SCANNER_URL,
         user: who
           ? {
               id: who.profile.id,
@@ -620,11 +616,6 @@ async function handle(
       }
       if (parts[2] === "evidence" && method === "POST") {
         if (staff) fail(403, "Solo quien reporta puede agregar evidencias.");
-        if (!demo && !process.env.EVIDENCE_SCANNER_URL)
-          fail(
-            503,
-            "La carga de evidencias todavía no está disponible. Puedes enviar y consultar tu reporte sin adjuntos.",
-          );
         if (Number(req.headers.get("content-length") || 0) > MAX_UPLOAD_BYTES)
           fail(413, "El archivo supera el límite.");
         if (
@@ -643,28 +634,12 @@ async function handle(
           file.size > MAX_EVIDENCE_BYTES
         )
           fail(400, "Adjunta un PNG, JPG o PDF de hasta 4 MB.");
-        const bytes = Buffer.from(await file.arrayBuffer());
-        const mime = fileMime(bytes);
-        if (!mime || file.type !== mime)
-          fail(
-            400,
-            "El contenido del archivo no coincide con un PNG, JPG o PDF válido.",
-          );
-        if (!demo) {
-          if (!process.env.EVIDENCE_SCANNER_URL)
-            fail(
-              503,
-              "La carga de evidencias no está habilitada: falta configurar el análisis de seguridad.",
-            );
-          const scan = await fetch(process.env.EVIDENCE_SCANNER_URL, {
-            method: "POST",
-            body: bytes,
-            signal: AbortSignal.timeout(15000),
-            headers: { "Content-Type": "application/octet-stream" },
-          });
-          if (!scan.ok || (await scan.json()).clean !== true)
-            fail(400, "No se pudo validar la seguridad del archivo.");
-        }
+        const { bytes, mime, filename } = await prepareEvidence(
+          Buffer.from(await file.arrayBuffer()),
+          file.type,
+          file.name,
+          process.env.EVIDENCE_SCANNER_URL,
+        );
         const id = randomUUID(),
           location = `${r.id}/${id}`;
         if (demo) {
@@ -682,9 +657,9 @@ async function handle(
         await insert("evidence", {
           id,
           report_id: r.id,
-          filename: cleanFilename(file.name),
+          filename,
           mime,
-          size: file.size,
+          size: bytes.length,
           path: location,
           created_at: new Date().toISOString(),
         });
@@ -732,7 +707,7 @@ async function handle(
     }
     fail(404, "Ruta no encontrada.");
   } catch (error) {
-    if (error instanceof HttpError)
+    if (error instanceof HttpError || error instanceof EvidenceError)
       return NextResponse.json(
         { error: error.message },
         { status: error.status },

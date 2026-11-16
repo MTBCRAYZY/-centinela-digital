@@ -8,7 +8,7 @@
     "start": "node --use-env-proxy node_modules/next/dist/bin/next start --hostname 0.0.0.0",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
-    "test:unit": "tsx --test tests/security.test.ts tests/database.test.ts tests/origin.test.ts tests/auth.test.ts",
+    "test:unit": "tsx --test tests/security.test.ts tests/database.test.ts tests/origin.test.ts tests/auth.test.ts tests/evidence.test.ts",
     "check:config": "node --use-env-proxy scripts/check-config.mjs",
     "format": "prettier --write app components lib scripts tests supabase next.config.ts proxy.ts playwright.config.ts README.md package.json tsconfig.json postcss.config.mjs"
   },
@@ -24,6 +24,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.0.0",
+    "sharp": "^0.35.5",
     "tailwind-merge": "^3.0.0",
     "zod": "^4.0.0"
   },
