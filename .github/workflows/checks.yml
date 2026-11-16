@@ -1,0 +1,34 @@
+name: Checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      DEMO_MODE: "true"
+      ACCEPT_REAL_REPORTS: "false"
+      APP_ORIGIN: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run test:unit
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Start application and validate workflows
+        shell: bash
+        run: |
+          export CHROMIUM_PATH="$(node -e 'process.stdout.write(require("@playwright/test").chromium.executablePath())')"
+          npm start > /tmp/centinela-test-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://localhost:3000/api/session > /dev/null; then break; fi
+            sleep 1
+          done
+          npm test

@@ -1,1 +1,102 @@
-# -centinela-digital
+# Centinela Digital
+
+Aplicación web en español para registrar situaciones de violencia, consultar seguimiento privado y gestionar la atención desde un panel del equipo. Next.js, React, TypeScript, Tailwind CSS, componentes con el patrón de shadcn/ui (Radix Slot + CVA), Lucide y Supabase/PostgreSQL.
+
+## Estado y alcance
+
+Implementados: reportes de personas afectadas, testigos y contexto escolar; modalidad anónima o confidencial; categorías múltiples; formulario por pasos; folio con clave privada; evidencias privadas; mensajes asíncronos de seguimiento; aclaraciones sin sobrescribir el relato; notas internas; asignación, estado y prioridad por valoración humana; evaluación de casos cerrados; cuentas opcionales, recuperación y MFA del equipo; directorio editable; material educativo; novedades dentro de la cuenta y auditoría.
+
+La demostración local funciona con SQLite y datos **exclusivamente ficticios**. La integración de este entorno con Supabase ya se verificó: esquema, Auth, MFA, permisos y almacenamiento privado. La migración inicial ya está aplicada en el proyecto configurado; **no hay que volver a ejecutarla**. La recepción de casos reales sigue deshabilitada hasta completar las condiciones de operación indicadas más abajo.
+
+El seguimiento muestra la fecha de primera apertura por el equipo (consultar el listado no marca un caso como abierto). La evaluación de un caso cerrado permanece visible después de recargar y el equipo puede consultarla; solo quien reportó puede enviarla. Las evidencias se ofrecen únicamente cuando está configurado el análisis de archivos; su ausencia no impide registrar un reporte cuando la recepción esté habilitada.
+
+Vista previa del proyecto: https://centinela-digital-prueba-yael-4ef9.vercel.app. El código se mantiene en https://github.com/MTBCRAYZY/-centinela-digital. El enlace de vista previa puede requerir acceso a la cuenta de Vercel. Guardar código en GitHub no sustituye un despliegue: la conexión automática entre GitHub y Vercel debe configurarse en Vercel si se desea desplegar con cada cambio.
+
+No hay atención humana por chat en tiempo real, envío automático de correos/SMS, mapas con datos geográficos verificados ni canalización institucional automática. Los mensajes se consultan dentro del seguimiento. Los portales del directorio son referencias oficiales; confirma servicios y horarios. La plataforma no presenta denuncias ante autoridades ni activa emergencias.
+
+## Inicio local
+
+Requiere **Node.js 24** y npm. Trabaja en el checkout existente `/workspace/-centinela-digital`; cada tarea de nube ya está aislada, por lo que no necesitas crear un worktree.
+
+```bash
+npm ci --cache /tmp/centinela-npm
+cp .env.example .env.local
+npm run dev
+```
+
+Copia `.env.example` únicamente si `.env.local` todavía no existe; conserva cualquier configuración previa. `DEMO_MODE=true` permite probar la aplicación sin Supabase. La clave de firma de la demo se genera aleatoriamente en `.data/session-key`, fuera de Git. En **Iniciar sesión**, los botones **Entrar como usuario** y **Entrar como equipo** abren perfiles ficticios, sin contraseñas compartidas. Estos accesos se desactivan cuando `DEMO_MODE` no es `true`.
+
+La demo persiste los reportes y archivos en `.data/`, nunca en `public/`. No la despliegues con información real. `.data/`, los archivos `.env`, las dependencias, resultados de pruebas y la compilación están excluidos de Git.
+
+## Conectar Supabase
+
+Proyecto indicado por el equipo: `https://jeoyyjhxxnayisjallpa.supabase.co`. Esta URL es pública, no una contraseña.
+
+1. Ejecuta **una vez** `supabase/migrations/001_centinela.sql` en el SQL Editor del proyecto, o aplícala con Supabase CLI. La migración crea tablas, políticas RLS, funciones restringidas, el bucket privado `evidence` y referencias institucionales iniciales. No contiene usuarios reales ni claves. No la ejecutes sobre un esquema con tablas del mismo nombre sin revisar sus datos y compatibilidad.
+2. Introduce los valores en los ajustes seguros del entorno (o en un `.env.local` ignorado en tu propia máquina). Nunca los pegues en incidencias, commits, capturas o chats.
+
+| Variable                        | Uso                                                                                                                                                |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | URL HTTPS del proyecto.                                                                                                                            |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clave **publicable** o `anon` de Supabase. Es pública; no concede privilegios administrativos.                                                     |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Clave **secreta** o `service_role`. Solo servidor; evita RLS, por eso nunca debe llegar al navegador.                                              |
+| `SESSION_SECRET`                | Valor aleatorio de al menos 32 caracteres para firmar accesos temporales al seguimiento. Se genera fuera del código. No es una clave de Supabase.  |
+| `APP_ORIGIN`                    | Origen exacto de la aplicación, con esquema y puerto si corresponde; sin barra final. Se usa para rechazar solicitudes de otros orígenes.          |
+| `DEMO_MODE`                     | `false` para conectar Supabase.                                                                                                                    |
+| `ACCEPT_REAL_REPORTS`           | Mantener `false` hasta completar aviso de privacidad, responsables y protocolo de atención.                                                        |
+| `EVIDENCE_SCANNER_URL`          | Servicio interno de análisis de archivos. Sin él se rechaza la carga real, sin desactivar comprobaciones.                                          |
+| `TRUST_PROXY`                   | Por defecto desactivado. Activar solo si el despliegue garantiza que reemplaza `X-Forwarded-For`; en otro caso se usa un límite global compartido. |
+
+3. En Supabase Auth, configura la URL del sitio y autoriza el destino `${APP_ORIGIN}/cuenta` para confirmaciones y recuperación. Habilita confirmación de correo y TOTP. Configura un proveedor de correo antes de depender del registro y la recuperación. La aplicación no gestiona ni conoce sus credenciales de correo.
+4. Crea y confirma una cuenta del equipo. En el SQL Editor, asigna `role = 'admin'` a **su ID concreto de `auth.users`** en `public.profiles`. No incluyas IDs o correos reales en archivos SQL versionados. Las cuentas nuevas siempre reciben `user`; los metadatos enviados por el navegador no pueden otorgar roles.
+5. Inicia sesión y configura el autenticador desde la pantalla de acceso. El personal real requiere AAL2 tanto en las rutas como en las políticas de lectura de PostgreSQL. La administración puede dar o retirar `staff` a cuentas existentes; cada integrante solo ve casos asignados.
+6. Ejecuta `npm run check:config`. Solo imprime nombres/presencia y códigos HTTP; hace lecturas de configuración de Auth y de existencia del esquema. No imprime claves ni crea cuentas o reportes.
+7. Cambia a `DEMO_MODE=false`, reinicia la aplicación y repite un recorrido con datos ficticios en Supabase antes de habilitar recepción real.
+
+Los ajustes de la nube son un borrador separado del proceso en ejecución. Guardarlos no garantiza que ya estén inyectados; aplica/publica mediante el producto cuando corresponda y vuelve a ejecutar la comprobación. Los comandos de arranque usan el soporte de proxy de Node 24 para respetar el proxy HTTPS y las credenciales inyectadas por la plataforma.
+
+### Servicio de análisis de evidencias
+
+La aplicación envía `POST` con el archivo como `application/octet-stream` a `EVIDENCE_SCANNER_URL`. El servicio debe ser controlado por la institución, tener análisis antimalware real y responder con HTTP 2xx y JSON `{ "clean": true }` únicamente si lo comprobó. Un error, timeout o cualquier otra respuesta bloquea la carga. No uses un endpoint que devuelva éxito fijo. La demo no hace análisis antimalware y nunca debe aceptar archivos reales.
+
+Se permiten JPG, PNG y PDF de hasta **4 MB**, máximo 5 por reporte. El límite deja espacio para la solicitud multipart dentro de los 4.5 MB permitidos por Vercel. El bucket original admite hasta 5 MB; la API aplica el límite menor sin requerir otra migración. Se comprueba la firma del contenido, se usan rutas aleatorias y se fuerzan descargas como adjuntos. No se publica el bucket ni se exponen rutas internas. Los originales no se alteran: pueden contener metadatos identificativos. La política de retención debe contemplar también archivos, copias de seguridad y posibles análisis de terceros.
+
+## Comprobaciones
+
+```bash
+npm run typecheck
+npm run test:unit
+npm run build
+npm run start
+# En otra terminal, con el servidor anterior en ejecución:
+npm test
+```
+
+`npm test` requiere Chromium; por defecto usa `/usr/bin/chromium`. Si está en otra ubicación, define `CHROMIUM_PATH`. Las pruebas de navegador y API **solo se deben ejecutar en la demo**: crean reportes y cuentas ficticias. `test:unit` usa PostgreSQL embebido (PGlite) para ejecutar la migración y comprobar RLS, acceso por asignación, MFA, privilegios de funciones y ocultación de notas internas. Esto no sustituye pruebas de Auth/Storage contra un proyecto de Supabase real.
+
+Los tests de seguridad también verifican firmas, caducidad, hashes y exportación/importación de borradores AES-GCM con PBKDF2. Los recorridos comprueban el formulario, seguimiento, adjuntos privados, permisos y uso móvil. Las pruebas generan claves al ejecutarse; no hay contraseñas privadas versionadas.
+
+## Protección de datos y operación
+
+- Rutas de servidor con autorización por cada caso. El navegador no decide los permisos y nunca recibe la clave privilegiada.
+- Sesiones HttpOnly/SameSite; cookies Secure en producción; verificación de origen para mutaciones. CSP con nonce, sin `unsafe-eval` en producción; sin analítica ni carga de fuentes externas.
+- Los reportes anónimos tienen `owner_id = null` incluso con sesión iniciada. La clave de consulta es aleatoria de 256 bits y solo se conserva su hash. El acceso concede una cookie de 30 minutos; la clave no va en URL ni logs. No se puede recuperar una clave anónima perdida.
+- Contactos separados del relato. Las notas internas nunca se incluyen en la respuesta de seguimiento de la persona. Los cambios de estado y prioridad los decide una persona del equipo.
+- No hay autoguardado de relatos en localStorage. Se pueden descargar borradores cifrados con contraseña por decisión explícita. Descargar deja un archivo en el dispositivo.
+- La salida rápida intenta cerrar la sesión y cambia de página. No borra historial, descargas ni otras copias; no se presenta como protección absoluta.
+- Los registros de auditoría guardan acciones y referencias, sin duplicar relatos ni datos de contacto. El servidor evita imprimir solicitudes, claves y contenido de archivos.
+- Antes de operar con casos reales: completar identidad y contacto del responsable, aviso legal aplicable en México, derechos ARCO, retención y eliminación, procedimiento ante incidentes, respaldos con restauración probada y protocolo para menores/canalizaciones. No remitir automáticamente casos a una escuela que podría estar involucrada.
+- La demostración y las pruebas no validan un nivel de servicio ni tiempos de respuesta. Para un volumen grande, agregar paginación de interfaz y métricas operativas sin datos sensibles.
+
+## Estructura
+
+- `app/`: rutas, estilos, layout y API.
+- `components/`: interfaz pública, formulario, cuenta, seguimiento y panel.
+- `lib/domain.ts`: esquema de entrada y tipos compartidos.
+- `lib/backend.ts`: acceso a Supabase, demo, identidad y límites persistentes.
+- `lib/security.ts`, `lib/drafts.ts`: firmas, hashes, archivos y borradores cifrados.
+- `supabase/migrations/`: esquema versionado y permisos.
+- `tests/`: recorridos y verificaciones de seguridad.
+- `.env.example`: nombres de variables, sin secretos.
+
+No se incluyen servicios externos que no hayan sido conectados como si funcionaran. La publicación del entorno o de la aplicación es un paso separado de guardar este código.

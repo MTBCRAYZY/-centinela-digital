@@ -1,0 +1,44 @@
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+const variants = cva("btn", {
+  variants: {
+    variant: {
+      default: "btn-primary",
+      outline: "btn-outline",
+      ghost: "btn-ghost",
+    },
+  },
+  defaultVariants: { variant: "default" },
+});
+export function Button({
+  className,
+  variant,
+  asChild = false,
+  ...props
+}: React.ComponentProps<"button"> &
+  VariantProps<typeof variants> & { asChild?: boolean }) {
+  const Comp = asChild ? Slot : "button";
+  return <Comp className={cn(variants({ variant }), className)} {...props} />;
+}
+export function Notice({
+  children,
+  tone = "info",
+}: {
+  children: React.ReactNode;
+  tone?: string;
+}) {
+  return (
+    <div
+      className={`notice ${tone}`}
+      role={tone === "error" ? "alert" : "status"}
+    >
+      {children}
+    </div>
+  );
+}

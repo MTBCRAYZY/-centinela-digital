@@ -1,0 +1,15 @@
+.git/
+.env
+.env.*
+.data/
+.next/
+.vercel/
+node_modules/
+test-results/
+playwright-report/
+*.tsbuildinfo
+*.pem
+*.key
+*.p12
+credentials.json
+secrets.json

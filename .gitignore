@@ -1,0 +1,16 @@
+node_modules/
+.vercel/
+.next/
+.env*
+!.env.example
+.data/
+test-results/
+playwright-report/
+*.tsbuildinfo
+*.pem
+*.key
+*.p12
+credentials.json
+secrets.json
+supabase/.temp/
+.vercel
