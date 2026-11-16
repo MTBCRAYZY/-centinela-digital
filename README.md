@@ -10,7 +10,9 @@ La demostración local funciona con SQLite y datos **exclusivamente ficticios**.
 
 El seguimiento muestra la fecha de primera apertura por el equipo (consultar el listado no marca un caso como abierto). La evaluación de un caso cerrado permanece visible después de recargar y el equipo puede consultarla; solo quien reportó puede enviarla. Las evidencias se ofrecen únicamente cuando está configurado el análisis de archivos; su ausencia no impide registrar un reporte cuando la recepción esté habilitada.
 
-Vista previa del proyecto: https://centinela-digital-prueba-yael-4ef9.vercel.app. El código se mantiene en https://github.com/MTBCRAYZY/-centinela-digital. El enlace de vista previa puede requerir acceso a la cuenta de Vercel. Guardar código en GitHub no sustituye un despliegue: la conexión automática entre GitHub y Vercel debe configurarse en Vercel si se desea desplegar con cada cambio.
+Aplicación: https://centinela-digital-yael-4ef9.vercel.app. El código se mantiene en https://github.com/MTBCRAYZY/-centinela-digital. La integración de GitHub con Vercel está activa: cada cambio en `main` inicia un despliegue automático. El enlace de prueba anterior es independiente de ese despliegue.
+
+La identidad visual utiliza la paleta del segundo entregable y el logotipo original extraído del PDF. Los colores y sus usos están documentados en [Identidad visual](docs/identidad-visual.md) y centralizados en `app/globals.css`.
 
 No hay atención humana por chat en tiempo real, envío automático de correos/SMS, mapas con datos geográficos verificados ni canalización institucional automática. Los mensajes se consultan dentro del seguimiento. Los portales del directorio son referencias oficiales; confirma servicios y horarios. La plataforma no presenta denuncias ante autoridades ni activa emergencias.
 

@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   description:
     "Información, reportes confidenciales y orientación frente a situaciones de violencia.",
   robots: { index: false, follow: false },
+  icons: { icon: "/brand/centinela-digital.jpg" },
 };
 export default function RootLayout({
   children,

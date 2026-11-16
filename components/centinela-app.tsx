@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   ShieldCheck,
@@ -113,15 +114,14 @@ export default function CentinelaApp() {
       </a>
       <aside className={`sidebar ${open ? "is-open" : ""}`}>
         <Link href="/" className="brand">
-          <span className="brand-mark">
-            <ShieldCheck size={27} />
-          </span>
-          <span>
-            centinela
-            <span className="brand-digital">
-              digital<span className="brand-dot">.</span>
-            </span>
-          </span>
+          <Image
+            src="/brand/centinela-digital.jpg"
+            alt="Centinela Digital · Inicio"
+            width={627}
+            height={627}
+            sizes="156px"
+            preload
+          />
         </Link>
         <div className="sidebar-label">TU ESPACIO SEGURO</div>
         <nav aria-label="Navegación principal">
@@ -211,6 +211,15 @@ export default function CentinelaApp() {
             >
               {open ? <X /> : <Menu />}
             </button>
+            <Link href="/" className="mobile-brand">
+              <Image
+                src="/brand/centinela-digital.jpg"
+                alt="Centinela Digital · Inicio"
+                width={627}
+                height={627}
+                sizes="80px"
+              />
+            </Link>
             <span className="availability-dot" />
             <span>Un espacio para ser escuchado</span>
           </div>
@@ -348,16 +357,16 @@ function Home() {
           <div className="art-orbit orbit-one" />
           <div className="art-orbit orbit-two" />
           <div className="art-orbit orbit-three" />
-          <span className="art-spark spark-one">✳</span>
+          <span className="art-spark spark-one">✳︎</span>
           <span className="art-spark spark-two">✦</span>
-          <div className="art-shield">
-            <ShieldCheck strokeWidth={1.1} />
-            <span>
-              Un espacio
-              <br />
-              <strong>para ti.</strong>
-            </span>
-          </div>
+          <Image
+            className="hero-logo"
+            src="/brand/centinela-digital.jpg"
+            alt=""
+            width={627}
+            height={627}
+            sizes="(max-width: 520px) 112px, (max-width: 1200px) 160px, 220px"
+          />
           <div className="art-note">
             <span>
               <Heart size={17} />
