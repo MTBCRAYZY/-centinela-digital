@@ -1075,31 +1075,150 @@ main {
   font-size: 13px;
   line-height: 1.8;
 }
-.violence-impact .violence-impact-grid {
-  gap: 16px;
-  margin-bottom: 20px;
+.violence-infographic {
+  --infographic-ink: #382e25;
+  display: grid;
+  gap: 14px;
+  margin: 0 0 22px;
+  padding: clamp(12px, 3vw, 30px);
+  border: 1px solid #ecd890;
+  border-radius: var(--radius);
+  background: #fff0ad;
+  color: var(--infographic-ink);
 }
-.violence-impact-grid article {
-  padding: 18px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface-soft);
+.violence-infographic figcaption,
+.violence-infographic-card,
+.violence-infographic-support {
+  border-radius: 14px;
+  background: #fffdf3;
+  padding: clamp(14px, 2.6vw, 24px);
 }
-.violence-impact-grid h3 svg {
-  color: var(--primary);
+.violence-infographic figcaption {
+  text-align: center;
 }
-.violence-impact-grid article > :last-child {
+.violence-infographic figcaption p {
+  color: #775516;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.violence-infographic h2 {
+  font-size: clamp(23px, 3.6vw, 36px);
   margin-bottom: 0;
 }
-.violence-impact-grid ul {
-  list-style: disc;
-  padding-left: 20px;
+.violence-infographic-card,
+.violence-infographic-support {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
 }
-.violence-impact-grid li + li {
+.violence-infographic-card h3 {
+  font-size: clamp(18px, 2vw, 22px);
+  margin-bottom: 8px;
+}
+.violence-infographic-card p,
+.violence-infographic-support p {
+  color: #51463a;
+  margin-bottom: 10px;
+}
+.violence-infographic-card ul,
+.violence-research-text ul,
+.violence-research-text ol {
+  padding-left: 1.35em;
+}
+.violence-infographic-card ul,
+.violence-research-text ul {
+  list-style: disc;
+}
+.violence-infographic-card li + li,
+.violence-research-text li + li {
   margin-top: 6px;
 }
-.violence-impact > .btn {
-  white-space: normal;
+.violence-infographic-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 66px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #f9dad6;
+  color: #9a3b42;
+}
+.violence-infographic-card:nth-of-type(2) .violence-infographic-icon {
+  background: #d9eaf7;
+  color: #305677;
+}
+.violence-infographic-card:nth-of-type(3) .violence-infographic-icon {
+  background: #ebe0f3;
+  color: #613f78;
+}
+.violence-infographic-support {
+  background: #ffe283;
+}
+.violence-infographic-support .text-link {
+  color: #553d18;
+  text-decoration: underline;
+}
+@media (max-width: 480px) {
+  .violence-infographic-card {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .violence-infographic-icon {
+    width: 52px;
+  }
+  .violence-infographic-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+.violence-research details {
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--white);
+}
+.violence-research summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  border-radius: inherit;
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 700;
+  list-style: none;
+}
+.violence-research summary::-webkit-details-marker {
+  display: none;
+}
+.violence-research summary svg:last-child {
+  margin-left: auto;
+}
+.violence-research details[open] summary svg:last-child {
+  transform: rotate(180deg);
+}
+.violence-research-text {
+  max-width: 76ch;
+  padding: 0 14px 20px;
+  font-size: 15px;
+}
+.violence-research-text h3 {
+  margin-top: 24px;
+}
+.violence-research-text p {
+  color: var(--ink);
+}
+.violence-research-text ol {
+  list-style: decimal;
+}
+.violence-research-text ul,
+.violence-research-text ol {
+  margin-bottom: 16px;
+}
+.violence-research-text .text-link {
+  display: inline;
+  text-decoration: underline;
 }
 .help-tip {
   background: var(--surface-soft);
