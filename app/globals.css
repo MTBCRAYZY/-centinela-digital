@@ -1075,6 +1075,32 @@ main {
   font-size: 13px;
   line-height: 1.8;
 }
+.violence-impact .violence-impact-grid {
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.violence-impact-grid article {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-soft);
+}
+.violence-impact-grid h3 svg {
+  color: var(--primary);
+}
+.violence-impact-grid article > :last-child {
+  margin-bottom: 0;
+}
+.violence-impact-grid ul {
+  list-style: disc;
+  padding-left: 20px;
+}
+.violence-impact-grid li + li {
+  margin-top: 6px;
+}
+.violence-impact > .btn {
+  white-space: normal;
+}
 .help-tip {
   background: var(--surface-soft);
   padding: 16px;

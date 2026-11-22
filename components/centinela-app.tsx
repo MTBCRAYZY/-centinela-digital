@@ -35,6 +35,7 @@ import { education, type Resource } from "@/lib/domain";
 import { serviceInfo } from "@/lib/service-info";
 import { Button, Notice } from "./ui";
 import ReportWizard from "./report-wizard";
+import ViolenceImpact from "./violence-impact";
 import { Tracking, MyReports, Account, Login } from "./user-pages";
 import Admin from "./admin";
 const nav = [
@@ -564,6 +565,7 @@ function Information() {
         Una situación puede incluir varios tipos de violencia. No necesitas
         identificar una categoría con exactitud para buscar orientación.
       </Notice>
+      <ViolenceImpact />
       <Button asChild>
         <Link href="/reportar">
           Quiero reportar una situación <ArrowRight size={17} />
